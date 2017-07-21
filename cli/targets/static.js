@@ -366,9 +366,14 @@ function buildType(ref, type) {
             var prop = util.safeProp(field.name);
             prop = prop.substring(1, prop.charAt(0) === "[" ? prop.length - 1 : prop.length);
             var jsType = toJsType(field);
-            if (field.optional)
-                jsType = jsType + "|null";
-            typeDef.push("@property {" + jsType + "} " + (field.optional ? "[" + prop + "]" : prop) + " " + (field.comment || type.name + " " + field.name));
+            if (config.commentsStrict) {
+                typeDef.push("@property {" + jsType + "} " + prop + " " + (field.comment || type.name + " " + field.name));
+            } else {
+
+                if (field.optional)
+                    jsType = jsType + "|null";
+                typeDef.push("@property {" + jsType + "} " + (field.optional ? "[" + prop + "]" : prop) + " " + (field.comment || type.name + " " + field.name));
+            }
         });
         push("");
         pushComment(typeDef);
@@ -381,7 +386,9 @@ function buildType(ref, type) {
         type.parent instanceof protobuf.Root ? "@exports " + escapeName(type.name) : "@memberof " + exportName(type.parent),
         "@classdesc " + (type.comment || "Represents " + aOrAn(type.name) + "."),
         "@constructor",
-        "@param {" + exportName(type, true) + "=} [" + (config.beautify ? "properties" : "p") + "] Properties to set"
+        config.commentsStrict ?
+            "@param {NullablePartial<" + exportName(type, true) + ">=} [" + (config.beautify ? "properties" : "p") + "] Properties to set" :
+            "@param {" + exportName(type, true) + "=} [" + (config.beautify ? "properties" : "p") + "] Properties to set"
     ]);
     buildFunction(type, type.name, Type.generateConstructor(type));
 
@@ -455,7 +462,9 @@ function buildType(ref, type) {
             "@memberof " + exportName(type),
             "@static",
             "@param {" + exportName(type, true) + "=} [properties] Properties to set",
-            "@returns {" + exportName(type) + "} " + type.name + " instance"
+            config.commentsStrict ?
+                "@returns {NullablePartial<" + exportName(type) + ">} " + type.name + " instance" :
+                "@returns {" + exportName(type) + "} " + type.name + " instance"
         ]);
         push(escapeName(type.name) + ".create = function create(properties) {");
             ++indent;
