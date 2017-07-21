@@ -143,7 +143,10 @@ exports.main = function(args, callback) {
             if (!argv.main)
                 output.push(
                     "import * as $protobuf from \"protobufjs\";",
-                    ""
+                    "",
+                    `export type NullablePartial<T> = {
+    [P in keyof T]?: T[P] | null;
+}`
                 );
             output = output.join("\n") + "\n" + out.join("");
 
