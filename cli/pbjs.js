@@ -34,7 +34,7 @@ exports.main = function main(args, callback) {
             "force-message": "strict-message"
         },
         string: [ "target", "out", "path", "wrap", "dependency", "root", "lint" ],
-        boolean: [ "create", "encode", "decode", "verify", "convert", "delimited", "beautify", "comments", "es6", "sparse", "keep-case", "force-long", "force-number", "force-enum-string", "force-message" ],
+        boolean: [ "create", "encode", "decode", "verify", "convert", "delimited", "beautify", "comments", "comments-strict", "es6", "sparse", "keep-case", "force-long", "force-number", "force-enum-string", "force-message" ],
         default: {
             target: "json",
             create: true,

@@ -374,6 +374,24 @@ function buildType(ref, type) {
         pushComment(typeDef);
     }
 
+    if (config.commentsStrict) {
+        var typeDef = [
+            "Strict type properties of " + aOrAn(type.name) + ".",
+            type.parent instanceof protobuf.Root ? "@exports " + escapeName("Strict" + type.name) : "@memberof " + exportName(type.parent),
+            "@interface " + escapeName("Strict" + type.name)
+        ];
+        type.fieldsArray.forEach(function(field) {
+            var prop = util.safeProp(field.name);
+            prop = prop.substring(1, prop.charAt(0) === "[" ? prop.length - 1 : prop.length);
+            var jsType = toJsType(field);
+            typeDef.push("@property {" + jsType + "} " + prop + " " + (field.comment || type.name + " " + field.name));
+
+        });
+        push("");
+        pushComment(typeDef);
+        typeDef.push("@property {" + jsType + "} " + prop + " " + (field.comment || type.name + " " + field.name));
+    }
+
     // constructor
     push("");
     pushComment([
