@@ -389,7 +389,6 @@ function buildType(ref, type) {
         });
         push("");
         pushComment(typeDef);
-        typeDef.push("@property {" + jsType + "} " + prop + " " + (field.comment || type.name + " " + field.name));
     }
 
     // constructor
