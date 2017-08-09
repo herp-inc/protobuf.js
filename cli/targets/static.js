@@ -377,7 +377,7 @@ function buildType(ref, type) {
     if (config.commentsStrict) {
         var typeDef = [
             "Strict type properties of " + aOrAn(type.name) + ".",
-            type.parent instanceof protobuf.Root ? "@exports " + escapeName("Strict" + type.name) : "@memberof " + exportName(type.parent),
+            type.parent instanceof protobuf.Root ? "@exports " + escapeName("IStrict" + type.name) : "@memberof " + exportName(type.parent),
             "@interface " + escapeName("Strict" + type.name)
         ];
         type.fieldsArray.forEach(function(field) {
