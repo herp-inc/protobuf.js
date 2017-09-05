@@ -354,6 +354,56 @@ function toJsType(field) {
     return type;
 }
 
+function toStrictJsType(field) {
+    var type;
+
+    switch (field.type) {
+        case "double":
+        case "float":
+        case "int32":
+        case "uint32":
+        case "sint32":
+        case "fixed32":
+        case "sfixed32":
+            type = "number";
+            break;
+        case "int64":
+        case "uint64":
+        case "sint64":
+        case "fixed64":
+        case "sfixed64":
+            type = config.forceLong ? "Long" : config.forceNumber ? "number" : "number|Long";
+            break;
+        case "bool":
+            type = "boolean";
+            break;
+        case "string":
+            type = "string";
+            break;
+        case "bytes":
+            type = "Uint8Array";
+            break;
+        default:
+            if (field.resolve().resolvedType) {
+                if (!(field.resolvedType instanceof protobuf.Enum || config.forceMessage)) {
+                    const path = exportName(field.resolvedType, true).split('.');
+                    path[path.length - 1] = path[path.length - 1] + 'Strict'
+                    type = path.join('.')
+                } else {
+                    type = exportName(field.resolvedType, false);
+                }
+            }
+            else
+                type = "*"; // should not happen
+            break;
+    }
+    if (field.map)
+        return "Object.<string," + type + ">";
+    if (field.repeated)
+        return "Array.<" + type + ">";
+    return type;
+}
+
 function buildType(ref, type) {
 
     if (config.comments) {
@@ -383,7 +433,7 @@ function buildType(ref, type) {
         type.fieldsArray.forEach(function(field) {
             var prop = util.safeProp(field.name);
             prop = prop.substring(1, prop.charAt(0) === "[" ? prop.length - 1 : prop.length);
-            var jsType = toJsType(field);
+            var jsType = toStrictJsType(field);
             typeDef.push("@property {" + jsType + "} " + prop + " " + (field.comment || type.name + " " + field.name));
 
         });
